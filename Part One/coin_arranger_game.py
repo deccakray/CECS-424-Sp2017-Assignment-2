@@ -26,15 +26,37 @@ def moveHandler(coin_string):
 		tcp = input('Space to the left position of where you want to move: \n' + coin_string + '\n')
 		# Get whitespace length, store that into an int
 		to_cursor_position = len(tcp)
-		# Check if user spaces all the way to the end of the list: this is a valid placement
-		if to_cursor_position+1 >= len(coin_string):
-			break
-		# Check if user spaces to the left of two - -, signaling a coin gap: this is a valid placement
-		if coin_string[to_cursor_position + 1] == '-' and coin_string[to_cursor_position + 2] == '-':
-			condition2 = False
-		else:
-			print("You can't move there. Try again.")
 
+
+		gap = False
+		# if there is a coin gap in the string
+		if '--' in coin_string:
+			gap = True
+		else:
+			# Check if user spaces all the way to the end of the list: this is a valid placement
+			if to_cursor_position+1 >= len(coin_string):
+				break
+			else:
+				print("You can't move there. Try again.")
+			# Check if user spaces to the right of the list: this is a valid placement
+			if to_cursor_position == 0:
+				break
+		# While there is a coin gap
+		while gap:
+			try:
+				# Check if user spaces to the left of two - -, signaling a coin gap: this is a valid placement
+				if coin_string[to_cursor_position + 1] == '-' and coin_string[to_cursor_position + 2] == '-':
+					condition2 = False
+					break
+				else:
+					print("You can't move there. Try again.")
+					break
+			#Handle when user spaces cursor to the end of the list (with gap)
+			except IndexError:
+				print("You can't move there. Try again.")
+				pass
+				break
+		
 	# Turn coin string into a list
 	coin_list = list(coin_string)
 	coin_list_length = len(coin_list)
@@ -46,6 +68,9 @@ def moveHandler(coin_string):
 	# Insert moved_pair via .insert() into the list if user selects the end of the row
 	if (to_cursor_position +1) >= coin_list_length:
 		coin_list.insert(to_cursor_position+1, moved_pair)
+	# Insert moved_pair in the beginning of the list
+	elif (to_cursor_position == 0):
+		coin_list = [moved_pair] + coin_list
 	# If user did not selected at the end of the list, individually insert coins into list
 	else:
 		coin_list[to_cursor_position+1] = moved_pair[0:1]
@@ -77,7 +102,7 @@ def main():
 				# I've never actually beat it
 				print("Congratulations! You win!")
 			else:
-				print("You have failed miserably.")
+				print("Game over. You have failed miserably.")
 			condition = False
 
 
